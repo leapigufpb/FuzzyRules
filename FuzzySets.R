@@ -17,6 +17,8 @@
 ################################################
 ##             START OF FUNCTIONS             ##
 ################################################
+#library(devtools)
+devtools::source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/main/FuzzySets.R")
 
 
 ###################################################################
@@ -66,7 +68,7 @@ Set.Universe <- function(minX, maxX) {
 ##  Bug shift MF was fixed. Changed code for copying MF_temp to the MF vector
 
 
-TriFS <- function(U,a,b,c) {
+TriFS <- function(U,a,b,c, alphamax = 1) {
 ## Check if the membership function can be created for those parameters and the Universe U
   flag = 1
 
@@ -74,11 +76,13 @@ TriFS <- function(U,a,b,c) {
     stop("Support of the Fuzzy Sets must be include in the Universe")
   }
   if (a > b || b > c || c < a) stop("a <= b <= c for a triangular membership function")
+  # -- Jodavid --
+  if (alphamax > 1) stop("alphamax value must be less than 1")
 
   if (flag == 1) {
     ## Auxiliar variables
     aa <- 0.0
-    bb <- 1.0
+    bb <- alphamax # Jodavid - 1.0
     T1 <- c(a, b)
     T2 <- c(aa, bb)
     T3 <- c(b, c)
@@ -125,7 +129,7 @@ TriFS <- function(U,a,b,c) {
     ## Copia MF_temp para o vetor MF substituindo os zeros nas posicoes adequadas
 
     j=1
-    for (i in pos_min_support: pos_max_support) {
+    for (i in pos_min_support:pos_max_support) {
       MF[i] <- MF_temp[j]
       j = j + 1
     }
@@ -135,7 +139,11 @@ TriFS <- function(U,a,b,c) {
 
 
    ## Compute the alpha-cuts for the Triangular Fuzzy Set
-   alpha <- seq(0, 1.0, 0.05)
+   #alpha <- seq(0, 1.0, 0.05)
+   # -- Jodavid --
+   # O valor do TraFS de 61, foi referência para esse
+   alpha <- seq(0, alphamax, length.out = 31) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
+   # -- Jodavid --
 
    ##linear regresssions to estimate fuzzy set
    res=lm(formula = T1 ~ T2)
@@ -153,7 +161,7 @@ TriFS <- function(U,a,b,c) {
    ri <- sort(right_interval)
    ri<- ri[2:length(ri)]
    support=c(left_interval, ri)
-   compl <- (1-alpha)
+   compl <- (alphamax-alpha) #Jodavid = (1-alpha)
    compl <- compl[2:length(compl)]
    alpha_cut=c(alpha, compl)
    alpha_cuts <- cbind(support, alpha_cut)
@@ -178,7 +186,7 @@ TriFS <- function(U,a,b,c) {
 ## d - the upper boundary                        ##
 ###################################################
 
-TraFS <- function(U,a,b,c,d) {
+TraFS <- function(U,a,b,c,d, alphamax = 1) {
 
 ## Check if the membership function can be created for those parameters and the Universe U
   flag = 1
@@ -189,11 +197,13 @@ TraFS <- function(U,a,b,c,d) {
   if (a > b || a > c || a > d || b > c || b > d || c > d) {
     stop("a <= b <= c <= d for a trapezoidal membership function")
   }
+  # -- Jodavid --
+  if (alphamax > 1) stop("alphamax value must be less than 1")
 
   if (flag == 1) {
     ## Auxiliar variables
     aa <- 0.0
-    bb <- 1.0
+    bb <- alphamax # Jodavid 1.0
     T1 <- c(a, b)
     T2 <- c(aa, bb)
     T3 <- c(c, d)
@@ -218,7 +228,8 @@ TraFS <- function(U,a,b,c,d) {
     }
 
     ## Flat of a trapezoidal fuzzy set (b,c)
-    center_interval <- rep(1, length(supportC))
+    #center_interval <- rep(1, length(supportC))
+    center_interval <- rep(alphamax, length(supportC))
 
     ## Right-side of a trapezoidal fuzzy set (c,d)
     if (length(supportR) == 1) {
@@ -256,7 +267,12 @@ TraFS <- function(U,a,b,c,d) {
    MF_Tra <- cbind(U, MF)
 
    ## Compute the alpha-cuts for the Triangular Fuzzy Set
-   alpha <- seq(0, 1.0, 0.05)
+   #alpha <- seq(0, 1.0, 0.05)
+   # -- Jodavid --
+   # Imagem referência para as demais, ou seja, o valor out das outras foram baseadas nessa
+   alpha <- seq(0, alphamax, length.out = 21) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
+   # -- Jodavid --
+
 
    ##linear regresssions to estimate fuzzy set
    res=lm(formula = T1 ~ T2)
@@ -269,7 +285,7 @@ TraFS <- function(U,a,b,c,d) {
    ## Left-side of a trapezoidal fuzzy set (a,b)
    left_interval <- alpha*coeff1 + intercept1
    ## Flat of a trapezoidal fuzzy set (b,c)
-   center_interval <- seq(b, c, 0.05)
+   center_interval <- seq(b, c, length.out = length(alpha)) # Correspondente ao tamanho default do trap #seq(b, c, 0.05)
    ## Right-side of a trapezoidal fuzzy set (c,d)
    right_interval <-  alpha*coeff2 + intercept2
 
@@ -278,7 +294,7 @@ TraFS <- function(U,a,b,c,d) {
    ti <- center_interval
    ti<- ti[2:length(ti)]
    support=c(left_interval, ti, ri)
-   compl <- (1-alpha)
+   compl <- (alphamax - alpha)
    compl <- compl[2:length(compl)]
    compl2 <- rep(1, length(ti))
    ## compl2 <- compl2[2:length(compl2)]
@@ -303,13 +319,15 @@ TraFS <- function(U,a,b,c,d) {
 ## for all elements in U        ##
 ##################################
 
-ConstFS <- function(U,x) {
+ConstFS <- function(U,x, alphamax = 1) {
 ## Check if the membership function can be created for those parameters and the Universe U
   flag = 1
 
   if (x < 0 || x > 1) {
     stop("Value x for Constant Fuzzy Set must be include in the [0,1]")
   }
+  # -- Jodavid --
+  if (alphamax > 1) stop("alphamax value must be less than 1")
 
   if (flag == 1) {
     MF <- rep(x, length(U))
@@ -317,7 +335,10 @@ ConstFS <- function(U,x) {
   MF_Const <- cbind(U, MF)
 
    ## Compute the alpha-cuts for the Constant Fuzzy Set - REVER - [min(U),max(U)] VALE AtEH 0.7
-   alpha <- seq(0, 1.0, 0.05)
+  #alpha <- seq(0, 1.0, 0.05)
+  # -- Jodavid --
+  alpha <- seq(0, alphamax, length.out = 21) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
+  # -- Jodavid --
    left_interval <- rep(0, length(alpha))
    right_interval <- rep(0, length(alpha))
    interval <- seq(0, x, 0.05)
@@ -334,7 +355,7 @@ ConstFS <- function(U,x) {
    ri <- sort(right_interval)
    ri<- ri[2:length(ri)]
    support=c(left_interval, ri)
-   compl <- (1-alpha)
+   compl <- (alphamax-alpha)
    compl <- compl[2:length(compl)]
    alpha_cut=c(alpha, compl)
    alpha_cuts <- cbind(support, alpha_cut)
@@ -360,13 +381,15 @@ ConstFS <- function(U,x) {
 
 ## Singleton fuzzy set (SingFS): MF = 1, if U = x; 0, U <> x.
 
-SingFS <- function(U,x) {
+SingFS <- function(U,x, alphamax = 1) {
 ## Check if the membership function can be created for those parameters and the Universe U
   flag = 1
 
   if (x < min(U) || x > max(U)) {
     stop("Value x for Constant Fuzzy Set must be include in the Universe")
   }
+  # -- Jodavid --
+  if (alphamax > 1) stop("alphamax value must be less than 1")
 
   if (flag == 1) {
     MF <- rep(0, length(U))
@@ -382,8 +405,11 @@ SingFS <- function(U,x) {
   MF_Sing <- cbind(U, MF)
 
    ## Compute the alpha-cuts for the Constant Fuzzy Set - Only position U=x has all alpha-cuts
+  #alpha <- seq(0, 1.0, 0.05)
+  # -- Jodavid --
+  alpha <- seq(0, alphamax, length.out = 21) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
+  # -- Jodavid --
 
-   alpha <- seq(0, 1.0, 0.05)
    ## Left-side of a singleton fuzzy set
    left_interval <- rep(U[position], length(alpha))
    ## Right-side of a singleton fuzzy set
@@ -392,7 +418,7 @@ SingFS <- function(U,x) {
    ri <- sort(right_interval)
    ri<- ri[2:length(ri)]
    support=c(left_interval, ri)
-   compl <- (1-alpha)
+   compl <- (alphamax-alpha)
    compl <- compl[2:length(compl)]
    alpha_cut=c(alpha, compl)
    alpha_cuts <- cbind(support, alpha_cut)
@@ -417,13 +443,15 @@ SingFS <- function(U,x) {
 ## Non-zero values in the MF - fixed
 ## Outliers in the alpha-cuts - fixed
 
-GauFS <- function(U,m,s) {
+GauFS <- function(U,m,s, alphamax = 1) {
 ## Check if the membership function can be created for those parameters and the Universe U
   flag = 1
 
   if (m < min(U) || m > max(U)) {
     stop("Mean of the Gaussian Fuzzy Set must be include in the Universe")
   }
+  # -- Jodavid --
+  if (alphamax > 1) stop("alphamax value must be less than 1")
 
   if (flag == 1) {
     ## Auxiliar variables
@@ -449,7 +477,11 @@ GauFS <- function(U,m,s) {
   MF_Gau <- cbind(U, MF)
 
    ## Compute the alpha-cuts for the Gaussian Fuzzy Set
-   alpha <- seq(0, 1.0, 0.05)
+  #alpha <- seq(0, 1.0, 0.05)
+  # -- Jodavid --
+  alpha <- seq(0, alphamax, length.out = 21) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
+  # -- Jodavid --
+
 
    left_interval <- rep(0, length(alpha))
    right_interval <- rep(0, length(alpha))
@@ -491,7 +523,7 @@ GauFS <- function(U,m,s) {
     ri <- sort(left_interval)
     ri<- ri[2:length(ri)]
     support=c(right_interval, ri)
-    compl <- (1-alpha)
+    compl <- (alphamax-alpha)
     compl <- compl[2:length(compl)]
     alpha_cut=c(alpha, compl)
     alpha_cuts <- cbind(support, alpha_cut)
@@ -530,19 +562,14 @@ interFS  <- function(U,FS1, FS2) {
 ##################################################
 
 uniFS  <- function(U,FS1, FS2) {
-  MaxFS <- rep(0, length(U))
-  if (FS[[1]] == "Triangular" || FS[[1]] == "Trapezoidal") {
+  #-------------
+  UniFS <- rep(0, length(U))
+  # ------------
     fs1 <- FS1[[3]][,2]
     fs2 <- FS2[[3]][,2]
     for ( i in 1:length(U) ) {
       UniFS[i] <- max(fs1[i],fs2[i])
     }
-  }
-  else {
-   for ( i in 1:length(U) ) {
-     UniFS[i] <- max(FS1[i],FS2[i])
-   }
-  }
   return(UniFS)
 }
 

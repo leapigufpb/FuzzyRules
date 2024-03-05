@@ -39,8 +39,11 @@ plotFS(X,service.poor)
 service.good <- GauFS(X, 5.0, 1.5)
 plotFS(X,service.good)
 
-service.excelent <- GauFS(X, 10, 1.5)
+service.excelent <- GauFS(X, 10, 1.5, alphamax = .3)
 plotFS(X,service.excelent)
+
+plotFS(X,uniFS(X, service.poor, service.good))
+
 
 
 ## Food
@@ -51,6 +54,11 @@ plotFS(X,food.rancid)
 food.delicious <- TraFS(X, 7, 9, 10, 10)
 plotFS(X,food.delicious)
 
+
+
+plotFS(X,uniFS(X, food.rancid, food.delicious))
+
+food.rancid[[1]]
 
 ## Tip
 
