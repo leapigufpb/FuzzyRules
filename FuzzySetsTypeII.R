@@ -1,7 +1,6 @@
 #library(devtools)
 devtools::source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/main/FuzzySets.R")
 
-
 ########################################
 ## Create Intervalar Type-2 Fuzzy Set ##
 ########################################
@@ -38,24 +37,24 @@ Create.IT2FS <- function(U, FSMax, FSMin) {
   if (Check (FS1, FS2) == 0){
     stop(" It is not possible to create IT2FS. MF superior must be greather or equal than MF inferior")
   }
-  
+
   ## name =c("IT2FS", FSMax[[1]], FSMin[[1]])
   ## parameters <- list(FSMax[[2]], FSMin[[2]])
-  
+
   ## FSMax[[3]][,1] ## Universe U values
   ## FSMax[[3]][,2] ## FSMax values
   ## FSMin[[3]][,1] ## Universe U values
   ## FSMin[[3]][,2] ## FSMin values
   MF_IT2FS <- cbind(FSMax[[3]][,1], FSMax[[3]][,2], FSMin[[3]][,2])
-  
+
   ## FSMax[[4]][,2] ## alpha values
   ## FSMax[[4]][,1] ## FSMax values
   ## FSMin[[4]][,2] ## alpha values
   ## FSMin[[4]][,1] ## FSMin values
   alpha_cuts <- cbind(FSMax[[4]][,1], FSMin[[4]][,1], FSMin[[4]][,2])
-  
+
   Lst <- list(name =c("IT2FS", FSMax[[1]], FSMin[[1]]), parameters <- list(FSMax[[2]], FSMin[[2]]), Membership.Function=MF_IT2FS, alphacuts=alpha_cuts)
-  
+
 }
 
 ##################################################################
@@ -90,25 +89,25 @@ Create.IT2FS2 <- function(U, FSMax, FSMin) {
   if (Check (FS1, FS2) == 0){
     stop(" It is not possible to create IT2FS. MF superior must be greather or equal than MF inferior")
   }
-  
+
   ## name =c("IT2FS", FSMax[[1]], FSMin[[1]])
   ## parameters <- list(FSMax[[2]], FSMin[[2]])
-  
+
   ## FSMax[[3]][,1] ## Universe U values
   ## FSMax[[3]][,2] ## FSMax values
   ## FSMin[[3]][,1] ## Universe U values
   ## FSMin[[3]][,2] ## FSMin values
   MF_IT2FS <- cbind(FSMax[[3]][,1], FSMax[[3]][,2], FSMin[[3]][,2])
-  
-  
+
+
   ## FSMax[[4]][,2] ## alpha values
   ## FSMax[[4]][,1] ## FSMax values
   ## FSMin[[4]][,2] ## alpha values
   ## FSMin[[4]][,1] ## FSMin values
   alpha_cuts <- cbind(FSMax[[4]][,1], FSMin[[4]][,1], FSMin[[4]][,2])
-  
-  
-  
+
+
+
   Lst <- list(name =c("IT2FS", FSMax[[1]], FSMin[[1]]), parameters <- list(FSMax[[2]], FSMin[[2]]), Membership.Function=MF_IT2FS, alphacuts=alpha_cuts)
-  
+
 }

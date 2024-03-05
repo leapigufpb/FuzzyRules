@@ -96,7 +96,7 @@ U <- X
 
 XMax <- TriFS(X, 6, 12.5, 19)
 a=8;b=11;c=15;d=16
-XMin <- TraFS(X, a,b,c,d,alphamax = .5)
+XMin <- TraFS(X, a,b,c,d, alphamax = .5)
 
 plotFS(U,XMax)
 par(new=TRUE)
@@ -147,6 +147,7 @@ XMin <- TriFS(X, 6, 12.5, 17,alphamax = .5)
 plotFS(U,XMax)
 par(new=TRUE)
 plotFS(U,XMin, col="red")
+abline(h = 0.5, col="gray", lty=2)
 
 T2 <- Create.IT2FS(U, XMax, XMin)
 plotIT2FS(U,T2)
