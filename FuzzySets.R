@@ -17,9 +17,6 @@
 ################################################
 ##             START OF FUNCTIONS             ##
 ################################################
-#library(devtools)
-devtools::source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/main/FuzzySets.R")
-
 
 ###################################################################
 ## Define the Universe X (a limited set) of Work (Set.Universe): ##
@@ -141,8 +138,8 @@ TriFS <- function(U,a,b,c, alphamax = 1) {
    ## Compute the alpha-cuts for the Triangular Fuzzy Set
    #alpha <- seq(0, 1.0, 0.05)
    # -- Jodavid --
-   # O valor do TraFS de 61, foi referência para esse
-   alpha <- seq(0, alphamax, length.out = 31) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
+   # O valor do TraFS de 81, foi referência para esse
+   alpha <- seq(0, alphamax, length.out = 41) # Tamannho equivalente a ir de 0 até 1 com passo 0.05
    # -- Jodavid --
 
    ##linear regresssions to estimate fuzzy set
@@ -300,6 +297,41 @@ TraFS <- function(U,a,b,c,d, alphamax = 1) {
    ## compl2 <- compl2[2:length(compl2)]
    alpha_cut=c(alpha, compl2, compl)
    alpha_cuts <- cbind(support, alpha_cut)
+
+   lengthvetorout <- (21*4)-3 #intervalos de alpha - 2 valores repetidos de interseção
+
+
+  if(length(alpha_cuts[,1]) < lengthvetorout){
+    quantidade <- lengthvetorout - length(alpha_cuts[,1])
+    # Verificando se é par
+    if((quantidade %% 2) == 0){
+      quant_metade <- quantidade/2
+      ini_1 <- rep(alpha_cuts[1,1],quant_metade)
+      ini_2 <- rep(alpha_cuts[1,2],quant_metade)
+      fim_1 <- rep(tail(alpha_cuts,1)[1],quant_metade)
+      fim_2 <- rep(tail(alpha_cuts,1)[2],quant_metade)
+      temp1 <- c(ini_1,alpha_cuts[,1],fim_1)
+      temp2 <- c(ini_2,alpha_cuts[,2],fim_2)
+      alpha_cuts <- cbind(support = temp1,alpha_cut = temp2)
+      alpha_cuts <- matrix(alpha_cuts, ncol=2);
+      colnames(alpha_cuts) <- c("support", "alpha_cut")
+    }else{
+      quant_metade <- floor(quantidade/2)
+      ini_1 <- rep(alpha_cuts[1,1],quant_metade)
+      ini_2 <- rep(alpha_cuts[1,2],quant_metade)
+      fim_1 <- rep(tail(alpha_cuts,1)[1],quant_metade+1)
+      fim_2 <- rep(tail(alpha_cuts,1)[2],quant_metade+1)
+      temp1 <- c(ini_1,alpha_cuts[,1],fim_1)
+      temp2 <- c(ini_2,alpha_cuts[,2],fim_2)
+      alpha_cuts <- cbind(support = temp1,alpha_cut = temp2)
+      alpha_cuts <- matrix(alpha_cuts, ncol=2);
+      colnames(alpha_cuts) <- c("support", "alpha_cut")
+    }
+
+  }else{
+    alpha_cuts <- alpha_cuts
+  }
+
 
    ## Output is a list with the name of type of FS, its parameters,
    ## the Membership Function created and its alpha cuts

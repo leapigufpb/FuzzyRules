@@ -1,3 +1,7 @@
+#library(devtools)
+devtools::source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/main/FuzzySets.R")
+
+
 ########################################
 ## Create Intervalar Type-2 Fuzzy Set ##
 ########################################
