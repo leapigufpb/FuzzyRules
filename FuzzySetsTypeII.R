@@ -208,3 +208,38 @@ fpTrap <- function(x, parameters, mbvalues){
   return(y)
 }
 
+##########################################
+## Method for computing OR on two IT2FS ##
+## Mamdani type using MAX               ##
+##########################################
+
+OR.IT2FS <- function(FRBS,x1,x2) {
+  if (FRBS == "Mandani") {
+    w1 <- max(x1[1],x2[1])
+    w2 <- max(x1[2],x2[2])
+  }
+  out <- c(w1, w2)
+  return(out)
+}
+
+
+
+###########################################
+## Method for computing AND on two IT2FS ##
+## Mamdani type using MIN                ##
+###########################################
+
+AND.IT2FS <- function(FRBS,x1,x2) {
+  if (FRBS == "Mandani") {
+    w1 <- min(x1[1],x2[1])
+    w2 <- min(x1[2],x2[2])
+  }
+  out <- c(w1, w2)
+  return(out)
+}
+
+
+
+
+
+

@@ -25,7 +25,8 @@ XMin <- TriFS(X, 7, 12.5, 17)
 T2 <- Create.IT2FS(U, XMax, XMin)
 plotIT2FS(U,T2)
 
-dmIT2FS(12,U,T2)
+x1 <- dmIT2FS(6,U,T2)
+x2 <- dmIT2FS(8,U,T2)
 
 abline(v = 12, col="gray", lty=2)
 abline(h = 0.9, col="gray", lty=2)
@@ -39,6 +40,8 @@ T2[[4]][,2]  ## T2 FSMax values
 T2[[4]][,3]  ## T2 FSMin values
 
 
+temp <- AND.IT2FS(FRBS, x1, x2)
+temp <- OR.IT2FS(FRBS, x1, x2)
 
 
 
