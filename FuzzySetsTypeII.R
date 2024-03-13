@@ -75,6 +75,9 @@ plotIT2FS <- function(Universe,IT2FS) {
 }
 
 
+## POR QUE TEM Create.IT2FS E Create.IT2FS2???
+## O PRIMEIRO NÃO VAI FUNCIONAR, POIS x PODE TER VALOR DIFERENTE DOS
+## VALORES ARMAZENADOS
 
 
 Create.IT2FS2 <- function(U, FSMax, FSMin) {
@@ -84,6 +87,8 @@ Create.IT2FS2 <- function(U, FSMax, FSMin) {
   flag = 1
   if ( length(U) != length(FSMax[[3]][,2]) || length(U) != length(FSMin[[3]][,2]) || length(FSMax[[3]][,2]) != length(FSMin[[3]][,2]) ) {
     print("Support of the both Fuzzy Sets MAX and MIN of IT2FS must be the same and equal to the Universe")
+
+	## REVER ESSA MSG - OS SUPORTES PODEM SER DIFERENTES!
   }
   ## Check if FSMax >= FSMin
   if (Check (FS1, FS2) == 0){
@@ -99,15 +104,107 @@ Create.IT2FS2 <- function(U, FSMax, FSMin) {
   ## FSMin[[3]][,2] ## FSMin values
   MF_IT2FS <- cbind(FSMax[[3]][,1], FSMax[[3]][,2], FSMin[[3]][,2])
 
-
   ## FSMax[[4]][,2] ## alpha values
   ## FSMax[[4]][,1] ## FSMax values
   ## FSMin[[4]][,2] ## alpha values
   ## FSMin[[4]][,1] ## FSMin values
   alpha_cuts <- cbind(FSMax[[4]][,1], FSMin[[4]][,1], FSMin[[4]][,2])
 
+  Lst <- list(name =c("IT2FS", FSMax[[1]], FSMin[[1]]), parameters <- listfuzzy(FSMax[[2]], FSMin[[2]]), Membership.Function=MF_IT2FS, alphacuts=alpha_cuts)
+}
+
+## REVER list(FSMax[[2]], FSMin[[2]]) - parametros nao estao acessiveis
 
 
-  Lst <- list(name =c("IT2FS", FSMax[[1]], FSMin[[1]]), parameters <- list(FSMax[[2]], FSMin[[2]]), Membership.Function=MF_IT2FS, alphacuts=alpha_cuts)
+
+#################################################################
+## Degree of membership of an element x to a fuzzy set (IT2FS) ##
+## Deveretornar um par de valores [mu_{FSMin}, mu_{FSMax}]
+#################################################################
+
+dmIT2FS <- function(x,U,FS1) {
+
+## Quando FSMax eh triangular
+## Um IF para todos os FSMax e outro para todos os FSMin ???
+## No final cria o par de valores de saída y_min e Y_max
+  parameters <- FS1[[2]][[1]]
+  y_max = switch(FS1[[1]][2],
+         "Triangular" = fpTrian(x, parameters,FS1[[3]][,2]),
+         "Gaussian" = fpGau(x, parameters),
+         "Trapezoidal" = fpTrap(x, parameters,FS1[[3]][,2]))
+
+  parameters <- FS1[[2]][[2]]
+  y_min = switch(FS1[[1]][3],
+                 "Triangular" = fpTrian(x, parameters,FS1[[3]][,3]),
+                 "Gaussian" = fpGau(x, parameters),
+                 "Trapezoidal" = fpTrap(x, parameters, FS1[[3]][,3]))
+
+    y <- c(y_min, y_max)
+    return(y)
+}
+
+
+fpTrian <- function(x,parameters, mbvalues){
+  aa <- 0.0
+  bb <- max(mbvalues)#1.0
+  T1 <- c(parameters[1], parameters[2])
+  T2 <- c(aa, bb)
+  T3 <- c(parameters[2], parameters[3])
+  T4 <- c(bb, aa)
+  ##linear regresssions to estimate Triangular fuzzy set
+  res=stats::lm(formula = T2 ~ T1)
+  intercept1 <- res$coefficients[1]
+  coeff1 <- res$coefficients[2]
+  res=stats::lm(formula = T4 ~ T3)
+  intercept2 <- res$coefficients[1]
+  coeff2 <- res$coefficients[2]
+  yL <- x * coeff1 + intercept1
+  if (yL < 0 || yL > max(mbvalues) || is.na(yL)) { yL = 0}
+  yR <- x * coeff2 + intercept2
+  if (yR < 0 || yR > max(mbvalues) || is.na(yR)) { yR = 0}
+  y = max(yL, yR)
+
+  return(y)
 
 }
+
+
+fpGau <- function(x,parameters){
+  y = exp(-0.5*((x-parameters[1])/parameters[2])^2)
+  if ( y <= 10^(-4) ) {
+    y = 0                ## Valor menor do que 10^-4 => 0
+  }
+  return(y)
+}
+
+fpTrap <- function(x, parameters, mbvalues){
+
+    if ( x >= parameters[2] & x <= parameters[3] ) {
+      y = max(mbvalues)
+      return(y)
+    }
+    else {
+      maxmbvalues <- max(mbvalues)
+      aa <- 0.0
+      bb <- maxmbvalues#1.0
+      T1 <- c(parameters[1], parameters[2])
+      T2 <- c(aa, bb)
+      T3 <- c(parameters[3], parameters[4])
+      T4 <- c(bb, aa)
+      ##linear regresssions to estimate Triangular fuzzy set
+      res=stats::lm(formula = T2 ~ T1)
+      intercept1 <- res$coefficients[1]
+      coeff1 <- res$coefficients[2]
+      res=stats::lm(formula = T4 ~ T3)
+      intercept2 <- res$coefficients[1]
+      coeff2 <- res$coefficients[2]
+      yL <- x * coeff1 + intercept1
+      if (yL < 0 || yL > maxmbvalues || is.na(yL)) { yL = 0}
+      yR <- x * coeff2 + intercept2
+      if (yR < 0 || yR > maxmbvalues || is.na(yR)) { yR = 0}
+      y = max(yL, yR)
+      return(y)
+    }
+  return(y)
+}
+

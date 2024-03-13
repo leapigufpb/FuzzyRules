@@ -5,7 +5,7 @@
 library(devtools)
 source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/main/FuzzySets.R")
 source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/main/FuzzySetsTypeII.R")
-
+#source("/home/jodavid/Documents/LEAPIG/Pos DOC/github/FuzzyRules/FuzzySetsTypeII.R")
 ###################################
 ## Development code for IT2FS #####
 ###################################
@@ -20,10 +20,26 @@ FRBS = "Mandani"
 U <- X
 
 XMax <- TriFS(X, 6, 12.5, 19)
-XMin <- TriFS(X, 7, 12.5, 15)
+XMin <- TriFS(X, 7, 12.5, 17)
 
 T2 <- Create.IT2FS(U, XMax, XMin)
 plotIT2FS(U,T2)
+
+dmIT2FS(12,U,T2)
+
+abline(v = 12, col="gray", lty=2)
+abline(h = 0.9, col="gray", lty=2)
+abline(h = 0.92, col="gray", lty=2)
+
+## T2 Parameters
+T2[[2]][[1]]       ## T2 FSMax parameters
+T2[[2]][[2]]       ## T2 FSMin parameters
+T2[[4]][,1]  ## Universe U values
+T2[[4]][,2]  ## T2 FSMax values
+T2[[4]][,3]  ## T2 FSMin values
+
+
+
 
 
 #Exemplo com Dois Triângulos - Com Erro
@@ -60,6 +76,13 @@ XMin <- TraFS(X, a,b,c,d)
 
 T2 <- Create.IT2FS(U, XMax, XMin)
 plotIT2FS(U,T2)
+
+dmIT2FS(12,U,T2)
+
+abline(v = 12, col="gray", lty=2)
+abline(h = 0.9, col="gray", lty=2)
+abline(h = 0.92, col="gray", lty=2)
+
 
 
 #Exemplo com Dois Triângulos - Com Erro
@@ -109,6 +132,13 @@ XMin[[4]]
 T2 <- Create.IT2FS(U, XMax, XMin)
 plotIT2FS(U,T2)
 
+dmIT2FS(12,U,T2)
+
+abline(v = 12, col="gray", lty=2)
+abline(h = 0.9, col="gray", lty=2)
+abline(h = 0.92, col="gray", lty=2)
+
+
 #Exemplo com um triangulo e um trapezio - Errado
 
 minX = 0
@@ -151,6 +181,12 @@ abline(h = 0.5, col="gray", lty=2)
 
 T2 <- Create.IT2FS(U, XMax, XMin)
 plotIT2FS(U,T2)
+
+dmIT2FS(12,U,T2)
+
+abline(v = 12, col="gray", lty=2)
+abline(h = 0.9, col="gray", lty=2)
+abline(h = 0.92, col="gray", lty=2)
 
 #Exemplo com um triangulo e um trapezio - Errado
 
