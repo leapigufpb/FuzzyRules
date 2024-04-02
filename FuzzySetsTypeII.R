@@ -10,7 +10,9 @@ devtools::source_url("https://raw.githubusercontent.com/leapigufpb/FuzzyRules/ma
 Check <- function(vmax, vmin) {
   cont = 0
   for (i in 1: length(vmax)) {
-    if (vmax[i] >= vmin[i]) {
+    x <- ifelse(vmax[i]< 1e-5, 0, vmax[i])
+    y <- ifelse(vmin[i]< 1e-5, 0, vmin[i])
+    if (x>=y) {
       cont = cont + 1
     }
   }
@@ -238,6 +240,87 @@ AND.IT2FS <- function(FRBS,x1,x2) {
   return(out)
 }
 
+#########################################################
+## Intersection of two fuzzy sets on the same Universe ##
+## Intersection is given by the Min (interFS)          ##
+#########################################################
+
+interFS.IT2FS  <- function(U,FS1, FS2) {
+  fs1 <- FS1[[3]][,2]
+  fs2 <- FS2[[3]][,2]
+  InterFS <- rep(0, length(U))
+  for ( i in 1:length(U) ) {
+    InterFS[i] <- min(fs1[i],fs2[i])
+  }
+  return(InterFS)
+}
+
+
+################################################
+## Method for computing Implication on two FS ##
+## Mamdani type using MIN                     ##
+################################################
+
+Implication.IT2FS <- function(FRBS,x,U,FS) {
+
+  xx= x
+  FS2 <- FS
+  MF_saida <- c()
+
+  for(i in 1:length(x)){
+
+    jj <- ifelse(i==1, 3, 2)
+
+    FS[[3]] <- FS2[[3]][,c(1,jj)]
+    x <- xx[i]
+
+    if (FRBS == "Mandani") {
+      FS1 <- ConstFS(U,x)
+      MF <- interFS(U,FS1, FS)
+    }
+
+    MF_saida <- cbind(MF_saida,MF)
+  }
+  return(MF_saida)
+
+}
+
+
+
+#############################################
+## Method for computing Aggregation on FSs ##
+## Mamdani type using MAX                  ##
+##############################################
+
+Aggregation.IT2FS <- function(FRBS,U,Lst) {
+  if (FRBS == "Mandani") {
+    MF <- Lst[[1]]
+    for (i in 2:length(Lst)) {
+      for ( j in 1:length(U) ) {
+        MF[j] <- max(MF[j], Lst[[i]][j])
+      }
+    }
+  }
+  return(MF)
+}
+
+
+
+
+#########################################################
+## Intersection of two fuzzy sets on the same Universe ##
+## Intersection is given by the Min (interFS)          ##
+#########################################################
+
+interFS.IT2FS  <- function(U,FS1, FS2) {
+  fs1 <- FS1[[3]][,2]
+  fs2 <- FS2[[3]][,2]
+  InterFS <- rep(0, length(U))
+  for ( i in 1:length(U) ) {
+    InterFS[i] <- min(fs1[i],fs2[i])
+  }
+  return(InterFS)
+}
 
 
 
