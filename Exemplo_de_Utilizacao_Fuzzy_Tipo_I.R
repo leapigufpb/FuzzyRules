@@ -48,9 +48,6 @@ par(new = T)
 plotFS(X,service.good, col = "red")
 par(new = T)
 plotFS(X,service.excelent, col = "green")
-# BUG do Positron
-par(new = T)
-plotFS(X,service.excelent, col = "green")
 
 ## Food
 
@@ -64,9 +61,6 @@ plotFS(X,food.delicious)
 
 ## Plot of Linguistic Variable "Food"
 plotFS(X,food.rancid, col = "blue")
-par(new = T)
-plotFS(X,food.delicious, col = "red")
-# BUG do Positron
 par(new = T)
 plotFS(X,food.delicious, col = "red")
 
@@ -85,9 +79,6 @@ plotFS(X,tip.generous)
 plotFS(X,tip.cheap, col = "blue")
 par(new = T)
 plotFS(X,tip.average, col = "red")
-par(new = T)
-plotFS(X,tip.generous, col = "green")
-# BUG do Positron
 par(new = T)
 plotFS(X,tip.generous, col = "green")
 
@@ -201,7 +192,7 @@ OutFS <-Aggregation(FRBS, X, Out_Rules_Lst)
 plotFS(X,OutFS)
 
 # plot all the rules and Aggregation
-X11() #jodavid
+X11()
 par(mfrow=c(4,3))
 plotFS(X,service.poor, col = "blue", main = "service.poor")
 abline(v=service)
