@@ -91,7 +91,7 @@ plotIT2FS(U,T2_Y)
 # Estamos fazenndo para 1 (um)caso com 1 (uma) regra
 
 ### Definindo pontos em X1 e X2
-x1 = 11 # Para trapezio 1
+x1 = 9 # Para trapezio 1
 x2 = 12 # para Trapezio 2
 
 # Definindo a Implicação
