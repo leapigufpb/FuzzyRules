@@ -1,0 +1,20 @@
+Package: FuzzyRules
+Title: Fuzzy Rules for Fuzzy Type II
+Version: 0.0.1
+Authors@R: 
+    c(person("Ronei", "Moraes", email = "ronei@de.ufpb.br",role = c("aut"), comment = c(ORCID = "0000-0001-8436-8950")),
+      person("Jodavid", "Ferreira", email = "jodavid@protonmail.com",role = c("aut","cre"), comment = c(ORCID = "0000-0002-2131-6464")),
+      person("Sergio", "Santos", email = "sergio.caua.dos.santos@academico.ufpb.br",role = c("aut"), comment = c(ORCID = "0009-0002-5994-5976")),
+      person("Liliane", "Santos", email = "liliane@di.ufpb.br",role = c("aut"), comment = c(ORCID = "0000-0002-1182-2929")))
+Description: This package have functions para Fuzzy Type II
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: 
+    graphics,
+    knitr,
+    rmarkdown,
+    stats,
+    utils
+VignetteBuilder: knitr
